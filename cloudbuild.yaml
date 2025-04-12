@@ -1,0 +1,78 @@
+# Google Cloud Build configuration for AutoGPT
+steps:
+  # Install dependencies and run tests for Platform components
+  - name: 'python:3.11'
+    id: 'test-platform-backend'
+    dir: 'autogpt_platform/backend'
+    entrypoint: pip
+    args: ['install', 'poetry']
+  - name: 'python:3.11'
+    dir: 'autogpt_platform/backend'
+    entrypoint: poetry
+    args: ['install', '--no-root']
+  - name: 'python:3.11'
+    dir: 'autogpt_platform/backend'
+    entrypoint: poetry
+    args: ['run', 'pytest']
+
+  # Build and push Platform Backend image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'gcr.io/$PROJECT_ID/autogpt-platform-backend:$COMMIT_SHA',
+      '-t', 'gcr.io/$PROJECT_ID/autogpt-platform-backend:latest',
+      '-f', 'autogpt_platform/backend/Dockerfile',
+      '.',
+    ]
+
+  # Build and push Platform Frontend image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'gcr.io/$PROJECT_ID/autogpt-platform-frontend:$COMMIT_SHA',
+      '-t', 'gcr.io/$PROJECT_ID/autogpt-platform-frontend:latest',
+      '-f', 'autogpt_platform/frontend/Dockerfile',
+      '.',
+    ]
+
+  # Build and push Classic AutoGPT image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'gcr.io/$PROJECT_ID/autogpt-classic:$COMMIT_SHA',
+      '-t', 'gcr.io/$PROJECT_ID/autogpt-classic:latest',
+      '-f', 'classic/Dockerfile.autogpt',
+      '.',
+    ]
+
+  # Deploy Platform Backend to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [
+      'run', 'deploy', 'autogpt-platform-backend',
+      '--image', 'gcr.io/$PROJECT_ID/autogpt-platform-backend:$COMMIT_SHA',
+      '--region', 'us-central1',
+      '--platform', 'managed',
+      '--allow-unauthenticated',
+    ]
+
+  # Deploy Platform Frontend to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [
+      'run', 'deploy', 'autogpt-platform-frontend',
+      '--image', 'gcr.io/$PROJECT_ID/autogpt-platform-frontend:$COMMIT_SHA',
+      '--region', 'us-central1',
+      '--platform', 'managed',
+      '--allow-unauthenticated',
+    ]
+
+images:
+  - 'gcr.io/$PROJECT_ID/autogpt-platform-backend:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/autogpt-platform-backend:latest'
+  - 'gcr.io/$PROJECT_ID/autogpt-platform-frontend:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/autogpt-platform-frontend:latest'
+  - 'gcr.io/$PROJECT_ID/autogpt-classic:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/autogpt-classic:latest'
+
+timeout: '3600s'
+options:
+  logging: CLOUD_LOGGING_ONLY

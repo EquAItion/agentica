@@ -1,27 +1,4 @@
-# AutoGPT: Build, Deploy, and Run AI Agents
 
-[![Discord Follow](https://dcbadge.vercel.app/api/server/autogpt?style=flat)](https://discord.gg/autogpt) &ensp;
-[![Twitter Follow](https://img.shields.io/twitter/follow/Auto_GPT?style=social)](https://twitter.com/Auto_GPT) &ensp;
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-**AutoGPT** is a powerful platform that allows you to create, deploy, and manage continuous AI agents that automate complex workflows. 
-
-## Hosting Options 
-   - Download to self-host
-   - [Join the Waitlist](https://bit.ly/3ZDijAI) for the cloud-hosted beta  
-
-## How to Setup for Self-Hosting
-> [!NOTE]
-> Setting up and hosting the AutoGPT Platform yourself is a technical process. 
-> If you'd rather something that just works, we recommend [joining the waitlist](https://bit.ly/3ZDijAI) for the cloud-hosted beta.
-
-### Updated Setup Instructions:
-We’ve moved to a fully maintained and regularly updated documentation site.
-
-👉 [Follow the official self-hosting guide here](https://docs.agpt.co/platform/getting-started/)
-
-
-This tutorial assumes you have Docker, VSCode, git and npm installed.
 
 ### 🧱 AutoGPT Frontend
 
